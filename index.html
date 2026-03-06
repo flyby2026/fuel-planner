@@ -119,7 +119,7 @@ font-size:14px;
 
 <div class="container">
 
-<!-- LEFT SIDE TOOL -->
+<!-- LEFT PANEL -->
 
 <div class="card">
 
@@ -156,11 +156,50 @@ font-size:14px;
 <th>Waive Gallons</th>
 </tr>
 
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+<tr>
+<td><input placeholder="EX: KOPF"></td>
+<td><input placeholder="EX: Signature"></td>
+<td><input placeholder="EX: Avfuel"></td>
+<td><input placeholder="EX: 4.14 or N/A"></td>
+<td><input placeholder="EX: 380 or N/A"></td>
+<td><input placeholder="EX: 144 or N/A"></td>
+</tr>
+
+<tr>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
+
+<tr>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
+
+<tr>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
+
+<tr>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
 
 </table>
 
@@ -170,22 +209,22 @@ font-size:14px;
 
 </div>
 
-<!-- RIGHT SIDE INSTRUCTIONS -->
+<!-- RIGHT PANEL -->
 
 <div class="card">
 
 <h3>About This Tool</h3>
 
 <p>
-The Direct Airways Fuel Planner is an internal dispatch planning tool used to
-evaluate multi-leg charter trips and determine the most economical fueling
-strategy.
+The Direct Airways Fuel Planner evaluates multi-leg charter trips and
+determines the most economical fueling strategy using fuel prices,
+handling fees, and waiver requirements.
 </p>
 
 <p>
-The planner calculates leg distances, estimated fuel burn, remaining fuel
-onboard, and evaluates fuel waiver economics to determine where fuel should
-be purchased.
+The planner calculates great-circle distances, estimated fuel burn,
+remaining fuel onboard, and the effective fuel price when waiving
+handling fees.
 </p>
 
 <hr>
@@ -196,15 +235,15 @@ be purchased.
 
 <li>Select the aircraft type.</li>
 
-<li>Enter the estimated fuel onboard at the start of the trip.</li>
+<li>Enter starting fuel onboard.</li>
 
-<li>Enter the route using comma-separated ICAO airport codes.</li>
+<li>Enter route using comma-separated ICAO codes.</li>
 
-<li>Optionally enter the next day's first leg.</li>
+<li>Optionally enter the first leg of the next day.</li>
 
-<li>Enter airport fuel information in the table.</li>
+<li>Enter airport fuel information.</li>
 
-<li>Click Generate Fuel Plan.</li>
+<li>Click <b>Generate Fuel Plan</b>.</li>
 
 </ul>
 
@@ -230,21 +269,20 @@ be purchased.
 
 <hr>
 
-<h3>Unknown Data</h3>
+<h3>Unknown Data Rule</h3>
 
 <p>
-If any information is unavailable, enter <b>N/A</b> in that field.
-The planner will treat N/A values as unknown and apply best judgement
-when making fueling decisions.
+If any airport information is unavailable, enter <b>N/A</b> in that field.
+The planner will interpret N/A as unknown and apply best judgement.
 </p>
 
 <ul>
 
-<li>Unknown fuel price → Pay Fee, No Uplift</li>
+<li>Fuel Price = N/A → Pay Fee, No Uplift</li>
 
-<li>Unknown waiver or fee → Minimum Operational Uplift</li>
+<li>Handling Fee or Waive Gallons = N/A → Minimum Operational Uplift</li>
 
-<li>KDAB → Always Uplift Max Fuel (contract fuel)</li>
+<li>KDAB → Always Uplift Max Fuel (Contract)</li>
 
 </ul>
 
@@ -254,9 +292,9 @@ when making fueling decisions.
 
 <ul>
 
-<li>Great-circle distance calculation</li>
+<li>Great-circle distance calculations</li>
 
-<li>Aircraft-specific cruise speed and fuel burn</li>
+<li>Aircraft-specific cruise speed and burn</li>
 
 <li>Remaining fuel tracking</li>
 
@@ -279,7 +317,7 @@ when making fueling decisions.
 <footer>
 
 Direct Airways Internal Tool<br>
-Fuel Planning Assistant v1.3
+Fuel Planning Assistant v1.4
 
 </footer>
 
