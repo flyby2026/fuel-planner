@@ -12,7 +12,7 @@ lon:data.longitude_deg
 
 }
 
-function haversine(a,b){
+function distance(a,b){
 
 let R=3440
 
@@ -31,29 +31,37 @@ return R*c
 
 }
 
+function getAircraft(){
+
+let type=document.getElementById("aircraft").value
+
+if(type==="kingair") return {speed:260,burn:95}
+if(type==="excel") return {speed:430,burn:190}
+if(type==="cj3") return {speed:415,burn:140}
+
+}
+
 async function calculate(){
 
-let routeInput=document.getElementById("route").value
-let route=routeInput.split(",")
+let aircraft=getAircraft()
 
-let speed=260
-let burn=95
+let speed=aircraft.speed
+let burn=aircraft.burn
+
+let route=document.getElementById("route").value.split(",")
 
 let output="LEG DISTANCES\n\n"
 
 for(let i=0;i<route.length-1;i++){
 
-let a=route[i].trim()
-let b=route[i+1].trim()
+let A=await getAirport(route[i].trim())
+let B=await getAirport(route[i+1].trim())
 
-let A=await getAirport(a)
-let B=await getAirport(b)
-
-let dist=haversine(A,B)
+let dist=distance(A,B)
 
 let fuel=Math.round((dist/speed)*burn)
 
-output+=`${a} → ${b}   ${Math.round(dist)} NM   ~${fuel} GAL\n`
+output+=`${route[i]} → ${route[i+1]}   ${Math.round(dist)} NM   ~${fuel} GAL\n`
 
 }
 
@@ -67,9 +75,7 @@ for(let i=1;i<table.rows.length;i++){
 
 let fuel=table.rows[i].cells[2].children[0].value
 
-if(fuel && fuel<cheapest){
-cheapest=fuel
-}
+if(fuel && fuel<cheapest) cheapest=fuel
 
 }
 
@@ -85,16 +91,20 @@ let waive=parseFloat(cells[4].children[0].value)
 
 if(!icao) continue
 
-let decision="Pay Fee, No Uplift"
+let decision="Pay Fee , No Uplift"
 
 let waiveCost=waive*fuel
 
 if(fuel===cheapest){
+
 decision="Uplift Max Fuel"
+
 }
 
 else if(waiveCost < fee){
+
 decision="Min Uplift to Waive Fee"
+
 }
 
 output += `${icao} – ${fbo} | ${decision} | Handling Fee – $${fee} | Min Uplift to Waive – ${waive} Gal | Fuel Price – $${fuel} / Gal\n\n`
