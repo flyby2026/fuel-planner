@@ -1,17 +1,17 @@
+const OPENAIP_KEY = "REPLACE_WITH_KEY";
+
 function getAircraft(){
 
 let type=document.getElementById("aircraft").value
 
 if(type==="kingair")
-return {name:"King Air 350",speed:260,burn:95,capacity:361}
+return {name:"King Air 350",speed:260,burn:95}
 
 if(type==="excel")
-return {name:"Citation Excel",speed:430,burn:190,capacity:1000}
+return {name:"Citation Excel",speed:430,burn:190}
 
 if(type==="cj3")
-return {name:"Citation CJ3",speed:415,burn:140,capacity:700}
-
-return {name:"Aircraft",speed:250,burn:100,capacity:300}
+return {name:"Citation CJ3",speed:415,burn:140}
 
 }
 
@@ -41,7 +41,7 @@ let dlon=(lon2-lon1)*Math.PI/180
 lat1=lat1*Math.PI/180
 lat2=lat2*Math.PI/180
 
-let a=Math.sin(dlat/2)**2 +
+let a=Math.sin(dlat/2)**2+
 Math.cos(lat1)*Math.cos(lat2)*Math.sin(dlon/2)**2
 
 let c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
@@ -54,14 +54,23 @@ async function getAirport(icao){
 
 try{
 
-let res=await fetch(`https://api.aviationapi.com/v1/airports?apt=${icao}`)
+let res=await fetch(
+`https://api.core.openaip.net/api/airports?icaoCode=${icao}`,
+{
+headers:{
+"x-openaip-api-key":OPENAIP_KEY
+}
+})
+
 let data=await res.json()
 
-if(!data[icao]) return null
+if(!data.items || data.items.length===0) return null
+
+let coords=data.items[0].geometry.coordinates
 
 return {
-lat:parseFloat(data[icao].latitude),
-lon:parseFloat(data[icao].longitude)
+lat:coords[1],
+lon:coords[0]
 }
 
 }catch{
@@ -81,7 +90,7 @@ let burnRate=aircraft.burn
 
 let route=document.getElementById("route").value
 .split(",")
-.map(x=>x.trim())
+.map(x=>x.trim().toUpperCase())
 .filter(x=>x.length>0)
 
 let startingFuel=cleanValue(document.getElementById("startingFuel").value)
