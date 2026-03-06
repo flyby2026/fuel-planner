@@ -111,7 +111,7 @@ font-size:14px;
 
 <header>
 
-<img src="logo.jpg">
+<img src="./logo.jpg">
 
 <h1>Direct Airways Fuel Planner</h1>
 
@@ -119,7 +119,7 @@ font-size:14px;
 
 <div class="container">
 
-<!-- LEFT SIDE PLANNER -->
+<!-- LEFT SIDE TOOL -->
 
 <div class="card">
 
@@ -133,15 +133,15 @@ font-size:14px;
 
 <h3>Fuel Onboard (Gallons)</h3>
 
-<input id="startingFuel" placeholder="EX. 320">
+<input id="startingFuel" placeholder="Example: 320">
 
 <h3>Route</h3>
 
-<input id="route" placeholder="EX. KDAB,KGMU,KPWK,KEYE">
+<input id="route" placeholder="Example: KDAB,KGMU,KPWK,KEYE">
 
 <h3>Next Day Leg (Optional)</h3>
 
-<input id="nextLeg" placeholder="EX. KPWK,KDAB">
+<input id="nextLeg" placeholder="Example: KPWK,KDAB">
 
 <h3>Airport Data</h3>
 
@@ -150,10 +150,10 @@ font-size:14px;
 <tr>
 <th>ICAO</th>
 <th>FBO</th>
-<th>Provider</th>
+<th>Fuel Provider</th>
 <th>Fuel Price</th>
-<th>Fee</th>
-<th>Waive</th>
+<th>Handling Fee</th>
+<th>Waive Gallons</th>
 </tr>
 
 <tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
@@ -170,81 +170,103 @@ font-size:14px;
 
 </div>
 
-<!-- RIGHT SIDE INFO -->
+<!-- RIGHT SIDE INSTRUCTIONS -->
 
 <div class="card">
 
 <h3>About This Tool</h3>
 
 <p>
-The Direct Airways Fuel Planner is an internal dispatch tool designed to assist
-with planning multi-leg charter flights. The tool calculates leg distances,
-estimates fuel burn based on aircraft type, and evaluates fuel price and
-handling fee waiver economics to recommend the most cost-effective fueling
+The Direct Airways Fuel Planner is an internal dispatch planning tool used to
+evaluate multi-leg charter trips and determine the most economical fueling
 strategy.
 </p>
 
 <p>
-Results are displayed in an operations-ready format that can be easily copied
-into flight planning notes, dispatch briefings, or crew communications.
+The planner calculates leg distances, estimated fuel burn, remaining fuel
+onboard, and evaluates fuel waiver economics to determine where fuel should
+be purchased.
 </p>
 
 <hr>
 
 <h3>How To Use</h3>
 
-<p><b>1. Select Aircraft</b><br>
-Choose the aircraft type for the flight. Cruise speed and fuel burn estimates
-will adjust automatically.
-</p>
-
-<p><b>2. Enter Starting Fuel</b><br>
-Enter the estimated fuel onboard at the start of the trip in gallons.
-</p>
-
-<p><b>3. Enter Route</b><br>
-Input the flight route as a comma-separated list of ICAO airport codes.<br>
-Example:<br>
-KDAB,KGMU,KPWK,KEYE
-</p>
-
-<p><b>4. Enter Next Day Leg (Optional)</b><br>
-If planning overnight stops, enter the next day's first leg to ensure enough
-fuel remains for departure.
-</p>
-
-<p><b>5. Enter Airport Data</b></p>
-
 <ul>
-<li>ICAO – Airport identifier</li>
-<li>FBO – Service provider</li>
-<li>Provider – Fuel contract provider</li>
-<li>Fuel Price – Cost per gallon</li>
-<li>Fee – Handling or landing fee</li>
-<li>Waive – Gallons required to waive the fee</li>
-</ul>
 
-<p><b>6. Generate Fuel Plan</b><br>
-Click the Generate button to calculate distances, burn estimates, and fuel
-purchase recommendations.
-</p>
+<li>Select the aircraft type.</li>
+
+<li>Enter the estimated fuel onboard at the start of the trip.</li>
+
+<li>Enter the route using comma-separated ICAO airport codes.</li>
+
+<li>Optionally enter the next day's first leg.</li>
+
+<li>Enter airport fuel information in the table.</li>
+
+<li>Click Generate Fuel Plan.</li>
+
+</ul>
 
 <hr>
 
-<h3>Planning Methodology</h3>
+<h3>Airport Data Fields</h3>
 
 <ul>
-<li>Great-circle distance calculation</li>
-<li>Aircraft-specific cruise speed and burn rate</li>
-<li>Remaining fuel tracking</li>
-<li>Fuel price comparison between airports</li>
-<li>Fee vs waiver cost analysis</li>
+
+<li><b>ICAO</b> – Airport identifier</li>
+
+<li><b>FBO</b> – Service provider</li>
+
+<li><b>Fuel Provider</b> – Contract fuel provider</li>
+
+<li><b>Fuel Price</b> – Price per gallon</li>
+
+<li><b>Handling Fee</b> – Ramp or handling fee</li>
+
+<li><b>Waive Gallons</b> – Fuel required to waive fee</li>
+
 </ul>
 
+<hr>
+
+<h3>Unknown Data</h3>
+
 <p>
-Operational considerations such as payload, weather, alternates, and regulatory
-reserves should always be reviewed before finalizing fueling decisions.
+If any information is unavailable, enter <b>N/A</b> in that field.
+The planner will treat N/A values as unknown and apply best judgement
+when making fueling decisions.
 </p>
+
+<ul>
+
+<li>Unknown fuel price → Pay Fee, No Uplift</li>
+
+<li>Unknown waiver or fee → Minimum Operational Uplift</li>
+
+<li>KDAB → Always Uplift Max Fuel (contract fuel)</li>
+
+</ul>
+
+<hr>
+
+<h3>Planning Logic</h3>
+
+<ul>
+
+<li>Great-circle distance calculation</li>
+
+<li>Aircraft-specific cruise speed and fuel burn</li>
+
+<li>Remaining fuel tracking</li>
+
+<li>Handling fee waiver economics</li>
+
+<li>Effective fuel price calculation</li>
+
+<li>Cheapest tanker detection</li>
+
+</ul>
 
 </div>
 
@@ -257,7 +279,7 @@ reserves should always be reviewed before finalizing fueling decisions.
 <footer>
 
 Direct Airways Internal Tool<br>
-Fuel Planning Assistant v1.1
+Fuel Planning Assistant v1.3
 
 </footer>
 
