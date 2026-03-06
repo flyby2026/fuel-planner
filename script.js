@@ -2,9 +2,14 @@ function getAircraft(){
 
 let type=document.getElementById("aircraft").value
 
-if(type==="kingair") return {name:"King Air 350",speed:260,burn:95,capacity:361}
-if(type==="excel") return {name:"Citation Excel",speed:430,burn:190,capacity:1000}
-if(type==="cj3") return {name:"Citation CJ3",speed:415,burn:140,capacity:700}
+if(type==="kingair")
+return {name:"King Air 350",speed:260,burn:95,capacity:361}
+
+if(type==="excel")
+return {name:"Citation Excel",speed:430,burn:190,capacity:1000}
+
+if(type==="cj3")
+return {name:"Citation CJ3",speed:415,burn:140,capacity:700}
 
 }
 
@@ -75,17 +80,18 @@ output+="\n---------------------------\n\n"
 
 let table=document.getElementById("airportTable")
 
-let cheapest=999
+let cheapestFuel=999
 let tanker=""
 
 for(let i=1;i<table.rows.length;i++){
 
 let fuel=parseFloat(table.rows[i].cells[3].children[0].value)
+let icao=table.rows[i].cells[0].children[0].value
 
-if(fuel && fuel<cheapest){
+if(fuel && fuel<cheapestFuel){
 
-cheapest=fuel
-tanker=table.rows[i].cells[0].children[0].value
+cheapestFuel=fuel
+tanker=icao
 
 }
 
@@ -104,23 +110,32 @@ let waive=parseFloat(cells[5].children[0].value)
 
 if(!icao) continue
 
-let decision="Pay Fee , No Uplift"
+let decision="Pay Fee, No Uplift"
 
-let waiveCost=waive*fuel
+let fuelCost = waive * fuel
+let extraCost = fuelCost - fee
+let penaltyPerGal = extraCost / waive
+let effectivePrice = fuel + penaltyPerGal
 
-if(icao===tanker){
+if(icao==="KDAB"){
+
+decision="Uplift Max Fuel (Contract)"
+
+}
+
+else if(icao===tanker){
 
 decision="Uplift Max Fuel"
 
 }
 
-else if(waiveCost < fee){
+else if(effectivePrice < cheapestFuel){
 
 decision="Min Uplift to Waive Fee"
 
 }
 
-output+=`${icao} – ${fbo} – ${provider} | ${decision} | Handling Fee – $${fee} | Min Uplift – ${waive} | Fuel – $${fuel}\n\n`
+output+=`${icao} – ${fbo} – ${provider} | ${decision} | Handling Fee – $${fee} | Min Uplift – ${waive} | Fuel – $${fuel} | Effective – $${effectivePrice.toFixed(2)}\n\n`
 
 }
 
