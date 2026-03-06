@@ -11,17 +11,23 @@ return {name:"Citation Excel",speed:430,burn:190,capacity:1000}
 if(type==="cj3")
 return {name:"Citation CJ3",speed:415,burn:140,capacity:700}
 
+return {name:"Aircraft",speed:250,burn:100,capacity:300}
+
 }
 
 function cleanValue(val){
 
 if(!val) return null
 
-val = val.toString().trim().toUpperCase()
+val=val.toString().trim().toUpperCase()
 
 if(val==="N/A") return null
 
-return parseFloat(val)
+let num=parseFloat(val)
+
+if(isNaN(num)) return null
+
+return num
 
 }
 
@@ -35,7 +41,7 @@ let dlon=(lon2-lon1)*Math.PI/180
 lat1=lat1*Math.PI/180
 lat2=lat2*Math.PI/180
 
-let a=Math.sin(dlat/2)**2+
+let a=Math.sin(dlat/2)**2 +
 Math.cos(lat1)*Math.cos(lat2)*Math.sin(dlon/2)**2
 
 let c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
@@ -48,10 +54,15 @@ async function getAirport(icao){
 
 try{
 
-let res=await fetch(`https://airportdb.io/api/v1/airport/${icao}?apiToken=demo`)
+let res=await fetch(`https://api.aviationapi.com/v1/airports?apt=${icao}`)
 let data=await res.json()
 
-return data
+if(!data[icao]) return null
+
+return {
+lat:parseFloat(data[icao].latitude),
+lon:parseFloat(data[icao].longitude)
+}
 
 }catch{
 
@@ -65,9 +76,17 @@ async function calculate(){
 
 let aircraft=getAircraft()
 
-let route=document.getElementById("route").value.split(",")
+let speed=aircraft.speed
+let burnRate=aircraft.burn
 
-let startingFuel=cleanValue(document.getElementById("startingFuel").value) || 0
+let route=document.getElementById("route").value
+.split(",")
+.map(x=>x.trim())
+.filter(x=>x.length>0)
+
+let startingFuel=cleanValue(document.getElementById("startingFuel").value)
+
+if(startingFuel===null) startingFuel=0
 
 let fuelRemaining=startingFuel
 
@@ -77,23 +96,26 @@ output+="LEG ANALYSIS\n\n"
 
 for(let i=0;i<route.length-1;i++){
 
-let A=await getAirport(route[i].trim())
-let B=await getAirport(route[i+1].trim())
+let dep=route[i]
+let arr=route[i+1]
+
+let A=await getAirport(dep)
+let B=await getAirport(arr)
 
 if(!A || !B){
 
-output+=`${route[i]} → ${route[i+1]}   Distance Unknown\n`
+output+=`${dep} → ${arr}   Distance Unknown\n`
 continue
 
 }
 
-let dist=haversine(A.latitude_deg,A.longitude_deg,B.latitude_deg,B.longitude_deg)
+let dist=haversine(A.lat,A.lon,B.lat,B.lon)
 
-let burn=Math.round((dist/aircraft.speed)*aircraft.burn)
+let burn=Math.round((dist/speed)*burnRate)
 
 fuelRemaining-=burn
 
-output+=`${route[i]} → ${route[i+1]}   ${Math.round(dist)} NM   Burn: ${burn} GAL   Remaining: ${Math.round(fuelRemaining)} GAL\n`
+output+=`${dep} → ${arr}   ${Math.round(dist)} NM   Burn: ${burn} GAL   Remaining: ${Math.round(fuelRemaining)} GAL\n`
 
 if(fuelRemaining<0){
 
@@ -107,8 +129,8 @@ output+="\n---------------------------\n\n"
 
 let table=document.getElementById("airportTable")
 
-let cheapestFuel=999
-let tanker=""
+let cheapestFuel=Infinity
+let tanker=null
 
 for(let i=1;i<table.rows.length;i++){
 
