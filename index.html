@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Aircraft Fuel Planner</title>
+<style>
+body {
+font-family: Arial;
+margin:40px;
+}
+
+textarea {
+width:600px;
+height:200px;
+}
+
+button {
+padding:10px;
+margin-top:10px;
+}
+
+pre {
+background:#f4f4f4;
+padding:15px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Aircraft Fuel Planner</h2>
+
+<h3>Route</h3>
+
+<input id="route" placeholder="KDAB,KGMU,KPWK,KEYE,KGMU,KDAB" size="50">
+
+<h3>Airport Data</h3>
+
+<textarea id="airportInput" placeholder="ICAO: KGMU
+FBO: Vantage Aviation
+Fuel price: 6.46
+Handling fee: 230
+Min uplift to waive fee: 120"></textarea>
+
+<br>
+
+<button onclick="calculate()">Generate Fuel Plan</button>
+
+<h3>Output</h3>
+
+<pre id="output"></pre>
+
+<script src="script.js"></script>
+
+</body>
+</html>
