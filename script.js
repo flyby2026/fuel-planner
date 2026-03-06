@@ -13,6 +13,18 @@ return {name:"Citation CJ3",speed:415,burn:140,capacity:700}
 
 }
 
+function cleanValue(val){
+
+if(!val) return null
+
+val = val.toString().trim().toUpperCase()
+
+if(val==="N/A") return null
+
+return parseFloat(val)
+
+}
+
 function haversine(lat1,lon1,lat2,lon2){
 
 let R=3440
@@ -34,10 +46,18 @@ return R*c
 
 async function getAirport(icao){
 
+try{
+
 let res=await fetch(`https://airportdb.io/api/v1/airport/${icao}?apiToken=demo`)
 let data=await res.json()
 
 return data
+
+}catch{
+
+return null
+
+}
 
 }
 
@@ -47,7 +67,7 @@ let aircraft=getAircraft()
 
 let route=document.getElementById("route").value.split(",")
 
-let startingFuel=parseFloat(document.getElementById("startingFuel").value)
+let startingFuel=cleanValue(document.getElementById("startingFuel").value) || 0
 
 let fuelRemaining=startingFuel
 
@@ -59,6 +79,13 @@ for(let i=0;i<route.length-1;i++){
 
 let A=await getAirport(route[i].trim())
 let B=await getAirport(route[i+1].trim())
+
+if(!A || !B){
+
+output+=`${route[i]} → ${route[i+1]}   Distance Unknown\n`
+continue
+
+}
 
 let dist=haversine(A.latitude_deg,A.longitude_deg,B.latitude_deg,B.longitude_deg)
 
@@ -85,10 +112,10 @@ let tanker=""
 
 for(let i=1;i<table.rows.length;i++){
 
-let fuel=parseFloat(table.rows[i].cells[3].children[0].value)
+let fuel=cleanValue(table.rows[i].cells[3].children[0].value)
 let icao=table.rows[i].cells[0].children[0].value
 
-if(fuel && fuel<cheapestFuel){
+if(fuel!==null && fuel<cheapestFuel){
 
 cheapestFuel=fuel
 tanker=icao
@@ -104,18 +131,15 @@ let cells=table.rows[i].cells
 let icao=cells[0].children[0].value
 let fbo=cells[1].children[0].value
 let provider=cells[2].children[0].value
-let fuel=parseFloat(cells[3].children[0].value)
-let fee=parseFloat(cells[4].children[0].value)
-let waive=parseFloat(cells[5].children[0].value)
+
+let fuel=cleanValue(cells[3].children[0].value)
+let fee=cleanValue(cells[4].children[0].value)
+let waive=cleanValue(cells[5].children[0].value)
 
 if(!icao) continue
 
 let decision="Pay Fee, No Uplift"
-
-let fuelCost = waive * fuel
-let extraCost = fuelCost - fee
-let penaltyPerGal = extraCost / waive
-let effectivePrice = fuel + penaltyPerGal
+let effectivePrice=null
 
 if(icao==="KDAB"){
 
@@ -123,19 +147,41 @@ decision="Uplift Max Fuel (Contract)"
 
 }
 
-else if(icao===tanker){
+else if(fuel===null){
+
+decision="Pay Fee, No Uplift"
+
+}
+
+else if(fee===null || waive===null){
+
+decision="Min Operational Uplift"
+
+}
+
+else{
+
+let fuelCost=waive*fuel
+let extraCost=fuelCost-fee
+let penalty=extraCost/waive
+
+effectivePrice=fuel+penalty
+
+if(icao===tanker){
 
 decision="Uplift Max Fuel"
 
 }
 
-else if(effectivePrice < cheapestFuel){
+else if(effectivePrice<cheapestFuel){
 
 decision="Min Uplift to Waive Fee"
 
 }
 
-output+=`${icao} – ${fbo} – ${provider} | ${decision} | Handling Fee – $${fee} | Min Uplift – ${waive} | Fuel – $${fuel} | Effective – $${effectivePrice.toFixed(2)}\n\n`
+}
+
+output+=`${icao} – ${fbo} – ${provider} | ${decision} | Fee ${fee ?? "N/A"} | Waive ${waive ?? "N/A"} | Fuel ${fuel ?? "N/A"} | Effective ${effectivePrice ? "$"+effectivePrice.toFixed(2) : "N/A"}\n\n`
 
 }
 
