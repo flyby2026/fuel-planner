@@ -1,4 +1,13 @@
-const OPENAIP_KEY = "REPLACE_WITH_KEY";
+let airportDB={}
+
+async function loadAirports(){
+
+let res=await fetch("airports.json")
+airportDB=await res.json()
+
+}
+
+loadAirports()
 
 function getAircraft(){
 
@@ -50,33 +59,15 @@ return R*c
 
 }
 
-async function getAirport(icao){
+function getAirport(icao){
 
-try{
+icao=icao.toUpperCase()
 
-let res=await fetch(
-`https://api.core.openaip.net/api/airports?icaoCode=${icao}`,
-{
-headers:{
-"x-openaip-api-key":OPENAIP_KEY
-}
-})
-
-let data=await res.json()
-
-if(!data.items || data.items.length===0) return null
-
-let coords=data.items[0].geometry.coordinates
+if(!airportDB[icao]) return null
 
 return {
-lat:coords[1],
-lon:coords[0]
-}
-
-}catch{
-
-return null
-
+lat:airportDB[icao].lat,
+lon:airportDB[icao].lon
 }
 
 }
@@ -108,8 +99,8 @@ for(let i=0;i<route.length-1;i++){
 let dep=route[i]
 let arr=route[i+1]
 
-let A=await getAirport(dep)
-let B=await getAirport(arr)
+let A=getAirport(dep)
+let B=getAirport(arr)
 
 if(!A || !B){
 
@@ -131,88 +122,6 @@ if(fuelRemaining<0){
 output+=`⚠ FUEL REQUIRED BEFORE THIS LEG\n`
 
 }
-
-}
-
-output+="\n---------------------------\n\n"
-
-let table=document.getElementById("airportTable")
-
-let cheapestFuel=Infinity
-let tanker=null
-
-for(let i=1;i<table.rows.length;i++){
-
-let fuel=cleanValue(table.rows[i].cells[3].children[0].value)
-let icao=table.rows[i].cells[0].children[0].value
-
-if(fuel!==null && fuel<cheapestFuel){
-
-cheapestFuel=fuel
-tanker=icao
-
-}
-
-}
-
-for(let i=1;i<table.rows.length;i++){
-
-let cells=table.rows[i].cells
-
-let icao=cells[0].children[0].value
-let fbo=cells[1].children[0].value
-let provider=cells[2].children[0].value
-
-let fuel=cleanValue(cells[3].children[0].value)
-let fee=cleanValue(cells[4].children[0].value)
-let waive=cleanValue(cells[5].children[0].value)
-
-if(!icao) continue
-
-let decision="Pay Fee, No Uplift"
-let effectivePrice=null
-
-if(icao==="KDAB"){
-
-decision="Uplift Max Fuel (Contract)"
-
-}
-
-else if(fuel===null){
-
-decision="Pay Fee, No Uplift"
-
-}
-
-else if(fee===null || waive===null){
-
-decision="Min Operational Uplift"
-
-}
-
-else{
-
-let fuelCost=waive*fuel
-let extraCost=fuelCost-fee
-let penalty=extraCost/waive
-
-effectivePrice=fuel+penalty
-
-if(icao===tanker){
-
-decision="Uplift Max Fuel"
-
-}
-
-else if(effectivePrice<cheapestFuel){
-
-decision="Min Uplift to Waive Fee"
-
-}
-
-}
-
-output+=`${icao} – ${fbo} – ${provider} | ${decision} | Fee ${fee ?? "N/A"} | Waive ${waive ?? "N/A"} | Fuel ${fuel ?? "N/A"} | Effective ${effectivePrice ? "$"+effectivePrice.toFixed(2) : "N/A"}\n\n`
 
 }
 
