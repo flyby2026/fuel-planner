@@ -50,7 +50,7 @@ let dlon=(lon2-lon1)*Math.PI/180
 lat1=lat1*Math.PI/180
 lat2=lat2*Math.PI/180
 
-let a=Math.sin(dlat/2)**2+
+let a=Math.sin(dlat/2)**2 +
 Math.cos(lat1)*Math.cos(lat2)*Math.sin(dlon/2)**2
 
 let c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
@@ -124,8 +124,6 @@ output+=`⚠ FUEL REQUIRED BEFORE THIS LEG\n`
 }
 
 }
-
-output+="\n---------------------------\n\n"
 
 document.getElementById("output").innerText=output
 
