@@ -1,14 +1,3 @@
-let airportDB={}
-
-async function loadAirports(){
-
-let res=await fetch("airports.json")
-airportDB=await res.json()
-
-}
-
-loadAirports()
-
 function getAircraft(){
 
 let type=document.getElementById("aircraft").value
@@ -40,34 +29,21 @@ return num
 
 }
 
-function haversine(lat1,lon1,lat2,lon2){
+async function getDistance(dep,arr){
 
-let R=3440
+try{
 
-let dlat=(lat2-lat1)*Math.PI/180
-let dlon=(lon2-lon1)*Math.PI/180
+let res=await fetch(`https://api.adsbdb.com/v0/calc/distance/${dep}/${arr}`)
+let data=await res.json()
 
-lat1=lat1*Math.PI/180
-lat2=lat2*Math.PI/180
+if(!data || !data.distance) return null
 
-let a=Math.sin(dlat/2)**2+
-Math.cos(lat1)*Math.cos(lat2)*Math.sin(dlon/2)**2
+return data.distance.nautical
 
-let c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
+}catch{
 
-return R*c
+return null
 
-}
-
-function getAirport(icao){
-
-icao=icao.toUpperCase()
-
-if(!airportDB[icao]) return null
-
-return {
-lat:airportDB[icao].lat,
-lon:airportDB[icao].lon
 }
 
 }
@@ -99,17 +75,14 @@ for(let i=0;i<route.length-1;i++){
 let dep=route[i]
 let arr=route[i+1]
 
-let A=getAirport(dep)
-let B=getAirport(arr)
+let dist=await getDistance(dep,arr)
 
-if(!A || !B){
+if(!dist){
 
 output+=`${dep} → ${arr}   Distance Unknown\n`
 continue
 
 }
-
-let dist=haversine(A.lat,A.lon,B.lat,B.lon)
 
 let burn=Math.round((dist/speed)*burnRate)
 
@@ -122,6 +95,88 @@ if(fuelRemaining<0){
 output+=`⚠ FUEL REQUIRED BEFORE THIS LEG\n`
 
 }
+
+}
+
+output+="\n---------------------------\n\n"
+
+let table=document.getElementById("airportTable")
+
+let cheapestFuel=Infinity
+let tanker=null
+
+for(let i=1;i<table.rows.length;i++){
+
+let fuel=cleanValue(table.rows[i].cells[3].children[0].value)
+let icao=table.rows[i].cells[0].children[0].value
+
+if(fuel!==null && fuel<cheapestFuel){
+
+cheapestFuel=fuel
+tanker=icao
+
+}
+
+}
+
+for(let i=1;i<table.rows.length;i++){
+
+let cells=table.rows[i].cells
+
+let icao=cells[0].children[0].value
+let fbo=cells[1].children[0].value
+let provider=cells[2].children[0].value
+
+let fuel=cleanValue(cells[3].children[0].value)
+let fee=cleanValue(cells[4].children[0].value)
+let waive=cleanValue(cells[5].children[0].value)
+
+if(!icao) continue
+
+let decision="Pay Fee, No Uplift"
+let effectivePrice=null
+
+if(icao==="KDAB"){
+
+decision="Uplift Max Fuel (Contract)"
+
+}
+
+else if(fuel===null){
+
+decision="Pay Fee, No Uplift"
+
+}
+
+else if(fee===null || waive===null){
+
+decision="Min Operational Uplift"
+
+}
+
+else{
+
+let fuelCost=waive*fuel
+let extraCost=fuelCost-fee
+let penalty=extraCost/waive
+
+effectivePrice=fuel+penalty
+
+if(icao===tanker){
+
+decision="Uplift Max Fuel"
+
+}
+
+else if(effectivePrice<cheapestFuel){
+
+decision="Min Uplift to Waive Fee"
+
+}
+
+}
+
+output+=`${icao} – ${fbo} – ${provider} | ${decision} | Fee ${fee ?? "N/A"} | Waive ${waive ?? "N/A"} | Fuel ${fuel ?? "N/A"} | Effective ${effectivePrice ? "$"+effectivePrice.toFixed(2) : "N/A"}\n\n`
 
 }
 
