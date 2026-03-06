@@ -1,50 +1,22 @@
-function parseAirportData(){
-
-let text=document.getElementById("airportInput").value
-let lines=text.split("\n")
-
-let airports=[]
-let current={}
-
-for(let line of lines){
-
-if(line.startsWith("ICAO:")){
-current.icao=line.split(":")[1].trim()
-}
-
-if(line.startsWith("FBO:")){
-current.fbo=line.split(":")[1].trim()
-}
-
-if(line.startsWith("Fuel price:")){
-current.fuel=parseFloat(line.split(":")[1])
-}
-
-if(line.startsWith("Handling fee:")){
-current.fee=line.split(":")[1].trim()
-}
-
-if(line.startsWith("Min uplift")){
-current.waive=line.split(":")[1].trim()
-
-airports.push(current)
-current={}
-}
-
-}
-
-return airports
-}
-
 function calculate(){
 
-let airports=parseAirportData()
+let table=document.getElementById("airportTable")
 
 let output=""
 
-for(let a of airports){
+for(let i=1;i<table.rows.length;i++){
 
-output += `${a.icao} – ${a.fbo} | Decision Pending | Handling Fee – $${a.fee} | Min Uplift to Waive – ${a.waive} Gal | Fuel Price – $${a.fuel} / Gal\n\n`
+let cells=table.rows[i].cells
+
+let icao=cells[0].children[0].value
+let fbo=cells[1].children[0].value
+let fuel=cells[2].children[0].value
+let fee=cells[3].children[0].value
+let waive=cells[4].children[0].value
+
+if(icao==="") continue
+
+output += `${icao} – ${fbo} | Decision Pending | Handling Fee – $${fee} | Min Uplift to Waive – ${waive} Gal | Fuel Price – $${fuel} / Gal\n\n`
 
 }
 
