@@ -24,12 +24,6 @@ gap:20px;
 
 header img{
 height:60px;
-object-fit:contain;
-}
-
-header h1{
-margin:0;
-font-weight:normal;
 }
 
 .container{
@@ -49,8 +43,7 @@ box-shadow:0 5px 12px rgba(0,0,0,0.1);
 input,select{
 width:100%;
 padding:10px;
-margin-top:5px;
-margin-bottom:15px;
+margin-bottom:12px;
 border-radius:6px;
 border:1px solid #ccc;
 }
@@ -67,13 +60,12 @@ padding:10px;
 }
 
 td{
-padding:8px;
+padding:6px;
 border-bottom:1px solid #eee;
 }
 
 td input{
 width:100%;
-padding:6px;
 }
 
 button{
@@ -86,10 +78,6 @@ font-size:16px;
 cursor:pointer;
 }
 
-button:hover{
-background:#5ca63d;
-}
-
 .output{
 margin:40px;
 background:#111;
@@ -100,13 +88,6 @@ font-family:monospace;
 white-space:pre-wrap;
 }
 
-footer{
-text-align:center;
-padding:20px;
-color:#666;
-font-size:14px;
-}
-
 </style>
 
 </head>
@@ -115,7 +96,7 @@ font-size:14px;
 
 <header>
 
-<img src="./logo.jpg" alt="Direct Airways Logo">
+<img src="logo.jpg">
 
 <h1>Direct Airways Fuel Planner</h1>
 
@@ -133,11 +114,17 @@ font-size:14px;
 <option value="cj3">Citation CJ3</option>
 </select>
 
+<h3>Fuel Onboard (Gallons)</h3>
+
+<input id="startingFuel" placeholder="EX. 320">
+
 <h3>Route</h3>
 
-<label>Route (comma separated ICAO)</label>
+<input id="route" placeholder="KDAB,KGMU,KPWK,KEYE">
 
-<input id="route" placeholder="EX. KDAB,KGMU,KPWK,KEYE,KGMU,KDAB">
+<h3>Next Day Leg</h3>
+
+<input id="nextLeg" placeholder="EX. KPWK,KDAB">
 
 <h3>Airport Data</h3>
 
@@ -146,16 +133,17 @@ font-size:14px;
 <tr>
 <th>ICAO</th>
 <th>FBO</th>
-<th>Fuel Price</th>
-<th>Handling Fee</th>
-<th>Waive Gal</th>
+<th>Provider</th>
+<th>Fuel</th>
+<th>Fee</th>
+<th>Waive</th>
 </tr>
 
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
-<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+<tr><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
 
 </table>
 
@@ -165,78 +153,19 @@ font-size:14px;
 
 </div>
 
-
 <div class="card">
 
 <h3>About This Tool</h3>
 
 <p>
-The Direct Airways Fuel Planner is an internal dispatch tool designed to help
-quickly evaluate multi-leg flight routing and determine the most cost-effective
-fuel strategy. The planner estimates leg distances, calculates approximate
-fuel burn based on aircraft type, and compares fuel pricing and fee waivers
-between airports to suggest fueling decisions.
+This planner estimates flight leg distance, fuel burn, and evaluates fuel pricing
+and waiver economics to suggest the most cost-effective fueling strategy for
+multi-leg charter flights.
 </p>
 
 <p>
-The output is formatted in an ops-ready style so the recommendation can be
-quickly copied into flight planning notes or dispatch communications.
-</p>
-
-<hr>
-
-<h3>How To Use</h3>
-
-<p><b>1. Select Aircraft</b><br>
-Choose the aircraft type for the trip. The planner adjusts cruise speed and
-fuel burn estimates accordingly.
-</p>
-
-<p><b>2. Enter Route</b><br>
-Input the route as a comma-separated list of ICAO airport codes.<br>
-Example:<br>
-KDAB,KGMU,KPWK,KEYE,KGMU,KDAB
-</p>
-
-<p><b>3. Enter Airport Data</b></p>
-
-<ul>
-<li><b>ICAO</b> – Airport identifier</li>
-<li><b>FBO</b> – Service provider</li>
-<li><b>Fuel Price</b> – Cost per gallon</li>
-<li><b>Handling Fee</b> – Landing or handling charge</li>
-<li><b>Waive Gal</b> – Minimum fuel uplift required to waive the fee</li>
-</ul>
-
-<p><b>4. Generate Fuel Plan</b><br>
-Click the Generate button to calculate leg distances and produce a suggested
-fueling strategy.
-</p>
-
-<hr>
-
-<h3>Planning Methodology</h3>
-
-<ul>
-<li>Great-circle distance calculation between airports</li>
-<li>Aircraft-specific cruise speed and fuel burn</li>
-<li>Fuel price comparison between stops</li>
-<li>Handling fee vs waiver uplift cost analysis</li>
-</ul>
-
-<p>
-Based on these factors the planner recommends one of the following actions:
-</p>
-
-<ul>
-<li><b>Uplift Max Fuel</b> – Cheapest fuel location on route</li>
-<li><b>Min Uplift to Waive Fee</b> – Fuel purchase cheaper than paying fee</li>
-<li><b>Pay Fee, No Uplift</b> – Fuel purchase not economically justified</li>
-</ul>
-
-<p>
-Results should always be reviewed with operational considerations including
-payload, weather, alternate requirements, and fuel reserve policies.
+The tool also considers fuel already onboard and optional next-day legs when
+determining fueling recommendations.
 </p>
 
 </div>
@@ -246,13 +175,6 @@ payload, weather, alternate requirements, and fuel reserve policies.
 <h3 style="margin-left:40px">Ops Ready Output</h3>
 
 <div class="output" id="output"></div>
-
-<footer>
-
-Direct Airways Internal Tool<br>
-Fuel Planning Assistant v1.0
-
-</footer>
 
 <script src="script.js"></script>
 
