@@ -26,6 +26,10 @@ header img{
 height:60px;
 }
 
+header h1{
+margin:0;
+}
+
 .container{
 padding:40px;
 display:grid;
@@ -78,6 +82,10 @@ font-size:16px;
 cursor:pointer;
 }
 
+button:hover{
+background:#5ca63d;
+}
+
 .output{
 margin:40px;
 background:#111;
@@ -86,6 +94,13 @@ padding:25px;
 border-radius:10px;
 font-family:monospace;
 white-space:pre-wrap;
+}
+
+footer{
+text-align:center;
+padding:20px;
+color:#666;
+font-size:14px;
 }
 
 </style>
@@ -104,6 +119,8 @@ white-space:pre-wrap;
 
 <div class="container">
 
+<!-- LEFT SIDE PLANNER -->
+
 <div class="card">
 
 <h3>Aircraft</h3>
@@ -120,9 +137,9 @@ white-space:pre-wrap;
 
 <h3>Route</h3>
 
-<input id="route" placeholder="KDAB,KGMU,KPWK,KEYE">
+<input id="route" placeholder="EX. KDAB,KGMU,KPWK,KEYE">
 
-<h3>Next Day Leg</h3>
+<h3>Next Day Leg (Optional)</h3>
 
 <input id="nextLeg" placeholder="EX. KPWK,KDAB">
 
@@ -134,7 +151,7 @@ white-space:pre-wrap;
 <th>ICAO</th>
 <th>FBO</th>
 <th>Provider</th>
-<th>Fuel</th>
+<th>Fuel Price</th>
 <th>Fee</th>
 <th>Waive</th>
 </tr>
@@ -153,19 +170,80 @@ white-space:pre-wrap;
 
 </div>
 
+<!-- RIGHT SIDE INFO -->
+
 <div class="card">
 
 <h3>About This Tool</h3>
 
 <p>
-This planner estimates flight leg distance, fuel burn, and evaluates fuel pricing
-and waiver economics to suggest the most cost-effective fueling strategy for
-multi-leg charter flights.
+The Direct Airways Fuel Planner is an internal dispatch tool designed to assist
+with planning multi-leg charter flights. The tool calculates leg distances,
+estimates fuel burn based on aircraft type, and evaluates fuel price and
+handling fee waiver economics to recommend the most cost-effective fueling
+strategy.
 </p>
 
 <p>
-The tool also considers fuel already onboard and optional next-day legs when
-determining fueling recommendations.
+Results are displayed in an operations-ready format that can be easily copied
+into flight planning notes, dispatch briefings, or crew communications.
+</p>
+
+<hr>
+
+<h3>How To Use</h3>
+
+<p><b>1. Select Aircraft</b><br>
+Choose the aircraft type for the flight. Cruise speed and fuel burn estimates
+will adjust automatically.
+</p>
+
+<p><b>2. Enter Starting Fuel</b><br>
+Enter the estimated fuel onboard at the start of the trip in gallons.
+</p>
+
+<p><b>3. Enter Route</b><br>
+Input the flight route as a comma-separated list of ICAO airport codes.<br>
+Example:<br>
+KDAB,KGMU,KPWK,KEYE
+</p>
+
+<p><b>4. Enter Next Day Leg (Optional)</b><br>
+If planning overnight stops, enter the next day's first leg to ensure enough
+fuel remains for departure.
+</p>
+
+<p><b>5. Enter Airport Data</b></p>
+
+<ul>
+<li>ICAO – Airport identifier</li>
+<li>FBO – Service provider</li>
+<li>Provider – Fuel contract provider</li>
+<li>Fuel Price – Cost per gallon</li>
+<li>Fee – Handling or landing fee</li>
+<li>Waive – Gallons required to waive the fee</li>
+</ul>
+
+<p><b>6. Generate Fuel Plan</b><br>
+Click the Generate button to calculate distances, burn estimates, and fuel
+purchase recommendations.
+</p>
+
+<hr>
+
+<h3>Planning Methodology</h3>
+
+<ul>
+<li>Great-circle distance calculation</li>
+<li>Aircraft-specific cruise speed and burn rate</li>
+<li>Remaining fuel tracking</li>
+<li>Fuel price comparison between airports</li>
+<li>Fee vs waiver cost analysis</li>
+</ul>
+
+<p>
+Operational considerations such as payload, weather, alternates, and regulatory
+reserves should always be reviewed before finalizing fueling decisions.
 </p>
 
 </div>
@@ -175,6 +253,13 @@ determining fueling recommendations.
 <h3 style="margin-left:40px">Ops Ready Output</h3>
 
 <div class="output" id="output"></div>
+
+<footer>
+
+Direct Airways Internal Tool<br>
+Fuel Planning Assistant v1.1
+
+</footer>
 
 <script src="script.js"></script>
 
