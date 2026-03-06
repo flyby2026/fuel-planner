@@ -29,17 +29,21 @@ box-shadow:0 4px 10px rgba(0,0,0,0.1);
 width:50%;
 }
 
-textarea{
+input{
+padding:8px;
 width:100%;
-height:220px;
-padding:10px;
-font-size:14px;
 }
 
-input{
+table{
 width:100%;
-padding:10px;
-margin-bottom:10px;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th,td{
+padding:8px;
+border-bottom:1px solid #ddd;
+text-align:left;
 }
 
 button{
@@ -50,6 +54,7 @@ border:none;
 border-radius:6px;
 cursor:pointer;
 font-size:16px;
+margin-top:15px;
 }
 
 button:hover{
@@ -65,12 +70,6 @@ margin-top:20px;
 white-space:pre-wrap;
 }
 
-.example{
-background:#f0f4ff;
-padding:15px;
-border-radius:6px;
-}
-
 </style>
 
 </head>
@@ -81,35 +80,6 @@ border-radius:6px;
 
 <div class="container">
 
-<!-- LEFT SIDE -->
-<div class="box">
-
-<h3>Example Airport Input</h3>
-
-<div class="example">
-
-<pre>
-ICAO: KGMU
-FBO: Vantage Aviation
-Fuel price: 6.46
-Handling fee: 230
-Min uplift to waive fee: 120
-
-ICAO: KPWK
-FBO: Signature
-Fuel price: 6.12
-Handling fee: 530
-Min uplift to waive fee: 140
-</pre>
-
-</div>
-
-<p>Paste airports in this format.</p>
-
-</div>
-
-
-<!-- RIGHT SIDE -->
 <div class="box">
 
 <h3>Route</h3>
@@ -120,11 +90,71 @@ Min uplift to waive fee: 140
 
 <h3>Airport Data</h3>
 
-<textarea id="airportInput"></textarea>
+<table id="airportTable">
 
-<br><br>
+<tr>
+<th>ICAO</th>
+<th>FBO</th>
+<th>Fuel Price</th>
+<th>Handling Fee</th>
+<th>Waiver Gal</th>
+</tr>
+
+<tr>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
+
+<tr>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
+
+<tr>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
+
+<tr>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
+
+<tr>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
+
+</table>
 
 <button onclick="calculate()">Generate Fuel Plan</button>
+
+</div>
+
+<div class="box">
+
+<h3>How to Use</h3>
+
+<p>1. Enter your route.</p>
+<p>2. Fill out airport fuel information.</p>
+<p>3. Click Generate Fuel Plan.</p>
+
+<p>The planner will generate your ops-ready format.</p>
 
 </div>
 
